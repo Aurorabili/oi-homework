@@ -1,0 +1,51 @@
+#include <iostream>
+
+struct node;
+using node_ptr = node*;
+struct node {
+  int weight;
+  node_ptr left;
+  node_ptr right;
+};
+
+int dfs(node_ptr node, int depth) {
+  if (!node->left && !node->right) return node->weight * depth;
+
+  int sum = 0;
+  if (node->left) sum += dfs(node->left, depth + 1);
+  if (node->right) sum += dfs(node->right, depth + 1);
+  return sum;
+}
+
+int main() {
+  int n;
+  std::cin >> n;
+
+  int weight[10];
+  for (int i = 0; i < n; ++i) {
+    std::cin >> weight[i];
+  }
+
+  node_ptr root_ = new node{weight[0], nullptr, nullptr};
+
+  for (int i = 0; i < n - 1; ++i) {
+    int parent, child;
+    std::cin >> parent >> child;
+    if (parent == 0) {
+      root_->left = new node{weight[child], nullptr, nullptr};
+    } else {
+      node_ptr parent_ = root_;
+      for (int j = 1; j < parent; ++j) {
+        parent_ = parent_->left;
+      }
+      if (!parent_->left) {
+        parent_->left = new node{weight[child], nullptr, nullptr};
+      } else {
+        parent_->right = new node{weight[child], nullptr, nullptr};
+      }
+    }
+  }
+
+  std::cout << dfs(root_, 0) << std::endl;
+  return 0;
+}
